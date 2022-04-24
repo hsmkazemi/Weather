@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.weather.databinding.ActivityShowInformationBinding
 import okhttp3.*
 import org.json.JSONObject
@@ -49,15 +50,31 @@ class ShowInformation : AppCompatActivity() {
                 val temp_max=mainObject.getDouble("temp_max")
                 val humidity=mainObject.getInt("humidity")
 
+                val cloud = jsonObject.getJSONObject("clouds")
+                val cloudiness = cloud.getInt("all")
+
                 val sys = jsonObject.getJSONObject("sys")
-                val country:String=sys.getString("country")
+                val country=sys.getString("country")
 
                 val api = API(name, main, description, temp, feels_like, temp_min, temp_max, humidity, country)
                 Log.d("tagx", "onCreate: ${api.toString()}")
 
-                val imageUrl = "http://openweathermap.org/img/wn/${iconWeather}@2x.png"
+                val imageUrl = "https://openweathermap.org/img/wn/${iconWeather}@2x.png"
+                val flagUrl = "https://countryflagsapi.com/png/${country}"
 
                 runOnUiThread {
+                    Glide.with(this@ShowInformation).load(imageUrl).into(binding.weather)
+                    Glide.with(this@ShowInformation).load(flagUrl).into(binding.flag)
+                    binding.name.text = name
+                    binding.currentTemp.text = "Current Temp " + temp.toString() +"°C"
+                    binding.feelsLike.text = "Feels like " + feels_like.toString() +"°C"
+                    binding.tempMin.text = "Min " + temp_min.toString() +"°C"
+                    binding.tempMax.text = "Max " + temp_max.toString() +"°C"
+                    binding.cloudiness.text = ("Cloudiness: "+cloudiness.toString() + "%")
+                    binding.humidity.text = ("Humidity: "+ humidity.toString() + "%")
+                    //binding.status.text = ("Status: "+main)
+                    binding.description.text = (description)
+
 
                 }
 
